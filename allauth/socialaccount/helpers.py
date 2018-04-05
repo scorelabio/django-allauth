@@ -3,6 +3,8 @@ from django.forms import ValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.conf import settings
+from django.utils.html import format_html
 
 from allauth.account import app_settings as account_settings
 from allauth.account.adapter import get_adapter as get_account_adapter
@@ -11,7 +13,7 @@ from allauth.exceptions import ImmediateHttpResponse
 
 from . import app_settings, signals
 from .adapter import get_adapter
-from .models import SocialLogin
+from .models import SocialLogin, SocialAccount
 from .providers.base import AuthError, AuthProcess
 
 
@@ -20,8 +22,20 @@ def _process_signup(request, sociallogin):
         request,
         sociallogin)
     if not auto_signup:
+        qs = SocialAccount.objects.filter(user=sociallogin.user)
+        if qs:
+            pass
+        else:
+            url = reverse(settings.LOGIN_URL)
+            html = format_html(
+                "{} associated email is already registered in base. " + \
+                "<a href={}>(Forgotten password ?)</a>",
+                sociallogin.user.email,
+                reverse('account_reset_password'),
+            )
+            messages.error(request, html)
+            request.session['login_email_redirect'] = sociallogin.user.email
         request.session['socialaccount_sociallogin'] = sociallogin.serialize()
-        url = reverse('socialaccount_signup')
         ret = HttpResponseRedirect(url)
     else:
         # Ok, auto signup it is, at least the e-mail address is ok.
