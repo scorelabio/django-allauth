@@ -22,19 +22,29 @@ def _process_signup(request, sociallogin):
         request,
         sociallogin)
     if not auto_signup:
-        qs = SocialAccount.objects.filter(user=sociallogin.user)
+        url = reverse(settings.LOGIN_URL)
+        qs = SocialAccount.objects.filter(user__email=sociallogin.user)
         if qs:
-            pass
+            providers_list = qs.values_list('provider', flat=True)
+            msg = (
+                "{} email already exist.<br>"
+                "You may be able to log in using one "
+                "of the providers associated with your account: {}."
+            )
+            msg = format_html(
+                    msg,
+                    sociallogin.user.email,
+                    ', '.join(providers_list),
+                )
         else:
-            url = reverse(settings.LOGIN_URL)
-            html = format_html(
-                "{} associated email is already registered in base. " + \
+            msg = format_html(
+                "{} email already exist. " + \
                 "<a href={}>(Forgotten password ?)</a>",
                 sociallogin.user.email,
                 reverse('account_reset_password'),
             )
-            messages.error(request, html)
             request.session['login_email_redirect'] = sociallogin.user.email
+        messages.error(request, msg)
         request.session['socialaccount_sociallogin'] = sociallogin.serialize()
         ret = HttpResponseRedirect(url)
     else:
