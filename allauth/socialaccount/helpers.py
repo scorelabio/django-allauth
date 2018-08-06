@@ -27,10 +27,10 @@ def _process_signup(request, sociallogin):
         if qs:
             providers_list = qs.values_list('provider', flat=True)
             msg = (
-                "{} email already exist.<br>"
-                "You may be able to log in using one "
-                "of the providers associated with your account: {}."
-            )
+               "L'adresse email {} existe déjà.<br>"
+               "Vous pouvez vous connecter en utilisant un "
+               "des fournisseurs associés à votre compte: {}."
+           )
             msg = format_html(
                     msg,
                     sociallogin.user.email,
@@ -38,10 +38,10 @@ def _process_signup(request, sociallogin):
                 )
         else:
             msg = format_html(
-                "{} email already exist. " + \
-                "<a href={}>(Forgotten password ?)</a>",
-                sociallogin.user.email,
-                reverse('account_reset_password'),
+               "L'adresse email {} existe déjà mais n'est pas lié à ce réseau social. " + \
+               "<a href={}>(Mot de passe oublié ?)</a>",
+               sociallogin.user.email,
+               reverse('account_reset_password'),
             )
             request.session['login_email_redirect'] = sociallogin.user.email
         messages.error(request, msg)
