@@ -12,6 +12,8 @@ from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.http import urlencode
 from django.utils.timezone import now
+from django.urls import reverse
+from django.utils.html import format_html
 
 from allauth.compat import base36_to_int, int_to_base36
 
@@ -158,11 +160,28 @@ def perform_login(request, user, email_verification,
                                     response=response,
                                     user=user,
                                     **signal_kwargs)
-        adapter.add_message(
-            request,
-            messages.SUCCESS,
-            'account/messages/logged_in.txt',
-            {'user': user})
+        socialaccount_sociallogin = request.session.get('socialaccount_sociallogin', None)
+        msg = 'Successfully signed in as %s.' % user.email
+        if socialaccount_sociallogin:
+            from allauth.socialaccount.models import SocialLogin
+            sociallogin = SocialLogin.deserialize(socialaccount_sociallogin)
+            from allauth.socialaccount.helpers import _add_social_account
+            if sociallogin and user.email == sociallogin.user.email:
+                _add_social_account(request, sociallogin)
+                print(dir(sociallogin.account.provider))
+                msg = (
+                    "Successfully signed in as {}"
+                    " Your account is now connected with {},"
+                    " you can manage at any moment your connected accounts <a href={}>in your profile.</a>"
+                )
+                profile_namespace = getattr(settings, 'PROFILE_URL', None)
+                msg = format_html(
+                    msg,
+                    user.email,
+                    socialaccount_sociallogin['account']['provider'].title(),
+                    reverse(profile_namespace) if profile_namespace else '/',
+                )
+        messages.success(request, msg)
     except ImmediateHttpResponse as e:
         response = e.response
     return response
