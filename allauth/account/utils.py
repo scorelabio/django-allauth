@@ -171,8 +171,8 @@ def perform_login(request, user, email_verification,
                 print(dir(sociallogin.account.provider))
                 msg = (
                     "Connecté avec succès en tant que {}"
-                    "Votre compte est maintenant connecté à {},"
-                    "Vous pouvez gérer à tout moment vos comptes connectés <a href={}> dans votre profil. </a>"
+                    "Votre compte est maintenant connecté à {},"
+                    "Vous pouvez gérer à tout moment vos comptes connectés <a href={}> dans votre profil. </a>"
                 )
                 profile_namespace = getattr(settings, 'PROFILE_URL', None)
                 msg = format_html(
