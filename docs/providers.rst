@@ -44,6 +44,19 @@ Development callback URL
     http://localhost:8000/accounts/500px/login/callback/
 
 
+AgaveAPI
+--------
+
+Account Signup
+    https://public.agaveapi.co/create_account
+
+App registration
+    Run ``client-create`` from the cli: https://bitbucket.org/agaveapi/cli/overview
+
+Development callback URL
+    http://localhost:8000/accounts/agave/login/callback/
+    *May require https url, even for localhost*
+
 Amazon
 ------
 
@@ -178,9 +191,17 @@ Development callback URL
     http://localhost:8000/accounts/box/login/callback/
 
 
+CERN
+----
+App registration (get your key and secret here)
+    https://sso-management.web.cern.ch/OAuth/RegisterOAuthClient.aspx
+
+CERN OAuth2 Documentation
+    https://espace.cern.ch/authentication/CERN%20Authentication/OAuth.aspx
+
+
 Dataporten
 ----------
-
 App registration (get your key and secret here)
     https://docs.dataporten.no/docs/gettingstarted/
 
@@ -642,6 +663,32 @@ Example:
             'SCOPE': ['read_user'],
         },
     }
+
+
+Globus
+------
+
+Registering an application:
+    https://developers.globus.org/
+
+By default, you will have access to the openid, profile, and offline_access
+scopes.  With the offline_access scope, the API will provide you with a
+refresh token.  For additional scopes, see the Globus API docs:
+    https://docs.globus.org/api/auth/reference/
+
+.. code-block:: python
+
+    SOCIALACCOUNT_PROVIDERS = {
+        'globus': {
+            'SCOPE': [
+                'openid',
+                'profile',
+                'email',
+                'urn:globus:auth:scope:transfer.api.globus.org:all'
+            ]
+        }
+    }
+
 
 
 Google
