@@ -161,7 +161,7 @@ def perform_login(request, user, email_verification,
                                     user=user,
                                     **signal_kwargs)
         socialaccount_sociallogin = request.session.get('socialaccount_sociallogin', None)
-        msg = 'Successfully signed in as %s.' % user.email
+        msg = 'Connecté avec succès en tant que %s.' % user.email
         if socialaccount_sociallogin:
             from allauth.socialaccount.models import SocialLogin
             sociallogin = SocialLogin.deserialize(socialaccount_sociallogin)
