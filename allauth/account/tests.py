@@ -12,6 +12,7 @@ from django.core import mail, validators
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.http import HttpResponseRedirect
+from django.template import Context, Template
 from django.test.client import Client, RequestFactory
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -659,7 +660,8 @@ class AccountTests(TestCase):
         return c, getattr(c, method)(reverse('account_logout'))
 
     @override_settings(ACCOUNT_EMAIL_VERIFICATION=app_settings
-                       .EmailVerificationMethod.OPTIONAL)
+                       .EmailVerificationMethod.OPTIONAL,
+                       ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE=False)
     def test_optional_email_verification(self):
         c = Client()
         # Signup
@@ -667,8 +669,7 @@ class AccountTests(TestCase):
         resp = c.post(reverse('account_signup'),
                       {'username': 'johndoe',
                        'email': 'john@example.com',
-                       'password1': 'johndoe',
-                       'password2': 'johndoe'})
+                       'password1': 'johndoe'})
         # Logged in
         self.assertRedirects(resp,
                              settings.LOGIN_REDIRECT_URL,
@@ -989,7 +990,7 @@ class CustomSignupFormTests(TestCase):
 
     @override_settings(
         ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE=True,
-        ACCOUNT_SIGNUP_PASSOWRD_ENTER_TWICE=True)
+        ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE=True)
     def test_custom_form_field_order(self):
 
         expected_field_order = [
@@ -1125,6 +1126,18 @@ class UtilsTests(TestCase):
         self.assertEqual(user_username(user), 'CamelCase')
         # TODO: Actually test something
         filter_users_by_username('camelcase', 'foobar')
+
+    def test_user_display(self):
+        user = get_user_model()(username='john<br/>doe')
+        expected_name = 'john&lt;br/&gt;doe'
+        templates = [
+            '{% load account %}{% user_display user %}',
+            '{% load account %}{% user_display user as x %}{{ x }}'
+        ]
+        for template in templates:
+            t = Template(template)
+            content = t.render(Context({'user': user}))
+            self.assertEqual(content, expected_name)
 
 
 class ConfirmationViewTests(TestCase):

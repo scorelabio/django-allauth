@@ -6,7 +6,7 @@ Requirements
 
 - Python 2.7, 3.3, 3.4, 3.5 or 3.6
 
-- Django (1.10+)
+- Django (1.11+)
 
 - python-openid or python3-openid (depending on your Python version)
 
@@ -107,6 +107,8 @@ Supported Providers
 
 - Instagram (OAuth2)
 
+- JupyterHub (OAuth2)
+
 - Kakao (OAuth2)
 
 - Line (OAuth2)
@@ -120,6 +122,8 @@ Supported Providers
 - Meetup (OAuth2)
 
 - Microsoft (Graph) (OAuth2)
+
+- NextCloud (OAuth2)
 
 - Naver (OAuth2)
 
@@ -143,6 +147,8 @@ Supported Providers
 
 - Salesforce (OAuth2)
 
+- ShareFile (OAuth2)
+
 - Shopify (OAuth2)
 
 - Slack (OAuth2)
@@ -152,6 +158,10 @@ Supported Providers
 - Spotify (OAuth2)
 
 - Stack Exchange (OAuth2)
+
+- Steam (OpenID)
+
+- Strava (OAuth2)
 
 - Stripe (OAuth2)
 
@@ -167,7 +177,7 @@ Supported Providers
 
 - Untappd (OAuth2)
 
-- Vimeo (OAuth)
+- Vimeo (OAuth, OAuth2)
 
 - VK (OAuth2)
 
@@ -208,5 +218,5 @@ Architecture & Design
 
 - Consumer keys, tokens make use of the Django sites framework. This
   is especially helpful for larger multi-domain projects, but also
-  allows for for easy switching between a development (localhost) and
+  allows for easy switching between a development (localhost) and
   production setup without messing with your settings and database.
